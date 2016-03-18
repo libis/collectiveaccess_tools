@@ -1,0 +1,1 @@
+Entries for images that were skipped during the linking process will be stored in a file in this directory.
