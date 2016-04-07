@@ -72,7 +72,8 @@ if(sizeof($argv) >= 4){
     }
 
     echo "Number of images to be processed: ".sizeof($imagesToLink)."\n";
-    $log->logInfo("Number of images to be processed: ".sizeof($imagesToLink));    
+    $log->logInfo("Number of images to be processed: ".sizeof($imagesToLink));
+    file_put_contents("log/imagestolink.txt", print_r($imagesToLink, true));
 
     $guzzle = new GuzzleRest($targetConfig, $log);
     $imagesSkipped = array();
@@ -92,12 +93,19 @@ if(sizeof($argv) >= 4){
         echo "\n<Processing image (".$imageData->pid.") for record: ".$imageData->recordId.">\n";
         switch(strtoupper($action)){
             case "ADD":
-                $query = "ca_objects.idno:'".trim($imageData->recordId)."'";
+                
+                /* Trim empty space and zeroes at the start of the identifier. */
+				$imageData->recordId = trim($imageData->recordId);
+                $imageData->recordId = ltrim($imageData->recordId, '0');
+                $query = "ca_objects.idno:'".$imageData->recordId."'";
+
                 $response = $guzzle->findObject($query, 'ca_objects');
                 $validResponse = $utils->isFindResponseValid($response);
                 if($validResponse['isValid']){
-                    $log->logInfo("\t\tObject found: object_id = " . $validResponse['object_id']);
-                    echo "Object found: " . $validResponse['object_id'].".\n";
+
+                    $log->logInfo("\t\tObject found (for record id ".$imageData->recordId." ): object_id = " . $validResponse['object_id']);
+                    echo "Object found (for record id ".$imageData->recordId." ): " . $validResponse['object_id'].".\n";
+
                     $objectId = $validResponse['object_id'];
                     $toUpdate = array(
                         "attributes" => (array($imageField => array(
@@ -135,7 +143,7 @@ if(sizeof($argv) >= 4){
                         foreach($existingPids as $item){
                             $normalizedPid = $utils->normalizePid($item->$imageField); // remove url from pid
                             if($normalizedPid === $imageData->pid){
-                                $log->logInfo("\t\tPid (" . $imageData->pid . ") to replace is found. Replacing it with " . $imageData->replacementPid. ".");
+				$log->logInfo("\t\tPid (" . $imageData->pid . ") to replace is found. Replacing it with " . $imageData->replacementPid. ".");
                                 $normalizedPid = $imageData->replacementPid;
                                 $pidReplacedCounter ++;
                             }
@@ -286,7 +294,7 @@ elseif(isset($argv[1]) && strtoupper($argv[1]) ===  "HELP"){
     echo "\t Supported systems: crkc, cag \n";
     echo "\t Supported actions: Add, Delete, Update\n";
     echo "\t Input file name, with extension. Input file should be placed in the data directory of this script.\n";
-    echo "\t For example: php imagelinker.php images_08032016.csv crkc add\n";
+    echo "\t For example: php imagelinker.php cag cag_20160406231010.csv add\n";
     echo "\n";
 }
 else
