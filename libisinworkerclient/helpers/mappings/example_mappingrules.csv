@@ -1,0 +1,43 @@
+COPY,ca_objects.idno,items::dc:Identifier
+COPY,ca_objects.preferred_labels,items::dc:Title
+COPY,ca_objects.object_id,items::Tablet:Object ID
+COPY,ca_objects.preferred_labels,items::Tablet:Museum No.
+COPY,ca_objects.idno,items::Tablet:NaBuCCo No.
+COPY,ca_objects.cdliNumber,items::Tablet:CDLI No.
+COPY,Publication,items::Tablet:Publication
+COPY,ca_objects.textNumber_2,items::Tablet:Text number
+COPY,ca_objects.pageNumber_2,items::Tablet:Page number
+COPY,ca_objects.datePeriod,items::Tablet:Period
+COPY,Place of issue ID,items::Tablet:Place of issue ID
+COPY,Place of issue,items::Tablet:Place of issue
+COPY,ca_objects.contentType,items::Tablet:Type and content
+COPY,ca_objects.babylonianDateSet.dateDay,items::Tablet:Day
+COPY,ca_objects.babylonianDateSet.dateDayRemark,items::Tablet:Day remark
+COPY,ca_objects.babylonianDateSet.dateMonth,items::Tablet:Month
+COPY,ca_objects.babylonianDateSet.dateMonthRemark,items::Tablet:Month remark
+COPY,ca_objects.babylonianDateSet.dateYear,items::Tablet:Year
+COPY,ca_objects.babylonianDateSet.dateYearRemark,items::Tablet:Year remark
+COPY,ca_objects.babylonianDateSet.dateKing,items::Tablet:King
+COPY,ca_objects.babylonianDateSet.kingRemark,items::Tablet:King remark
+COPY,ca_objects.babylonianDateSet.dateYearRemark,items::Tablet:Year remark
+COPY,ca_objects.babylonianDateRemark,items::Tablet:Date remark
+GETDATE,ca_objects.julianDate,items::Tablet:Julian date
+GETDATE,ca_objects.julianDate,items::Tablet:Julian date year
+COPY,ca_storage_locations,items::Tablet:Archive
+COPY,ca_occurrences.volumeNo,items::Tablet:Volume number
+COPY,ca_objects.descriptiveSummary,items::Tablet:Paraphrase
+COPY,ca_objects.quantifiableDataSet,items::Tablet:Items and quantifiable data
+COPY,ca_objects.Translit_tablet,items::Tablet:Transliteration
+COPY,ca_objects.unpublishedCopySet,items::Tablet:Duplicate
+COPY,ca_objects.otherMarkings,items::Tablet:Other markings
+SPLIT,Person,;,items::Tablet:Person;items::Tablet:Person;items::Tablet:Person;items::Tablet:Person;items::Tablet:Person;items::Tablet:Person
+SPLIT,Person role,;,items::Tablet:Person role;items::Tablet:Person role;items::Tablet:Person role;items::Tablet:Person role;items::Tablet:Person role;items::Tablet:Person role
+SPLIT,Person profession,;,items::Tablet:Person profession;items::Tablet:Person profession;items::Tablet:Person profession;items::Tablet:Person profession;items::Tablet:Person profession;items::Tablet:Person profession
+SPLIT,Akkadian keywords,;,items::Tablet:Akkadian keywords;items::Tablet:Akkadian keywords;items::Tablet:Akkadian keywords;items::Tablet:Akkadian keywords;items::Tablet:Akkadian keywords;items::Tablet:Akkadian keywords
+SPLIT,General keywords,;,items::Tablet:General keywords;items::Tablet:General keywords;items::Tablet:General keywords;items::Tablet:General keywords;items::Tablet:General keywords;items::Tablet:General keywords
+SPLITTOONEINTERSTITIAL,Role,$,items::Tablet:Person role
+PUT,true,items::featured
+PUT,true,collection::featured
+PUT,true,items::public
+PUT,"tablet",items::item_type
+PUT,"items",Resource
