@@ -373,7 +373,7 @@ elseif(isset($argv[1]) && strtoupper($argv[1]) ===  "HELP"){
     echo "To link images use the following command):\n";
     echo "\t 'php imagelinker.php system_name input_file_name action'\n";
     echo "\t Supported systems: crkc, cag \n";
-    echo "\t Supported actions: Add, Delete, Update\n";
+    echo "\t Supported actions: Add, Delete, Update, Duplicatedelete\n";
     echo "\t Input file name, with extension. Input file should be placed in the data directory of this script.\n";
     echo "\t For example: php imagelinker.php cag cag_20160406231010.csv add\n";
     echo "\n";
