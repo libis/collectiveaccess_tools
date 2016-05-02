@@ -61,6 +61,22 @@ class Utils
             }
         }
 
+        elseif(strtoupper($action) === "DUPLICATEDELETE"){
+            foreach($lines as $line){
+                $record = explode("\t", trim($line));
+                if(sizeof($record) != 1){
+                    $log->logError("Invalid format provided for ". $action." action: " .$line);
+                    continue;
+                }
+
+                $image = new ImageData();
+                $image->setRecordId(trim($record[0]));
+                $image->setOriginal(trim($line));
+                $imagesToLink [] = $image;
+                $image = null;
+            }
+        }
+
         return $imagesToLink;
     }
 

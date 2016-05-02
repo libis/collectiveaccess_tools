@@ -1,1 +1,1 @@
-A tool to add, delete and update images to Collective Access Records.
+A tool to add, delete and update images to Collective Access records and remove duplicate images.
