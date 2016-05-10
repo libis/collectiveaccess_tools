@@ -26,6 +26,8 @@ echo " [*] Waiting for requests to generate pdfs. To exit press CTRL+C", "\n";
 $callback = function($msg) {
     require __DIR__ . '/pdf_worker_conf.php';
 
+   echo "\r\n...............................\r\n";
+
     $microtime = round(microtime(true) * 1000);
     $va_base_directory = dirname(__FILE__)."/".$co_pdf_base_dir."/";
     $va_request_directory = $va_base_directory.$microtime;
@@ -39,8 +41,12 @@ $callback = function($msg) {
     $va_header_file = $va_request_directory."/".$file_name."_header.html";
     $va_pdf_file = $va_request_directory."/".$file_name.".pdf";
 
-    $temPath = explode(basename(__DIR__),$va_pdf_file);
-    $va_pdf_download_link = $co_base_url."/".basename(__DIR__).$temPath[1];
+    //$temPath = explode(basename(__DIR__),$va_pdf_file);
+    //$va_pdf_download_link = $co_base_url."/".basename(__DIR__).$temPath[1];
+    //$va_pdf_download_link = $co_base_url."/".basename(__DIR__).$temPath[1];
+
+    $tempPath = explode($co_worker_dir,$va_pdf_file);
+    $va_pdf_download_link = $co_base_url."/".$co_worker_dir.end($tempPath);
 
     $va_pdf_message = json_decode($msg->body);
     $va_pdf_contents = array_key_exists('pdf_contents', $va_pdf_message) ? $va_pdf_message->pdf_contents : '' ;
@@ -51,8 +57,7 @@ $callback = function($msg) {
 
     libxml_use_internal_errors(true);
     $dom = new DOMDocument;
-    $test = $dom->loadHTML($va_pdf_contents);
-    libxml_use_internal_errors(false);
+    $dom->loadHTML($va_pdf_contents);
     $nodes = $dom->getElementsByTagName("div");
     foreach ($nodes as $node) {
         if($node->getAttribute('id') === "pageHeader"){
@@ -61,6 +66,7 @@ $callback = function($msg) {
     }
     $va_pdf_contents = $dom->saveHTML();
 
+    libxml_use_internal_errors(true);
 
 
     file_put_contents($va_content_file, print_r($va_pdf_contents,true));
@@ -77,6 +83,7 @@ $callback = function($msg) {
             .'--header-html '.$va_header_file.' '
             .'-O '.$va_pdf_orientation.' '
             .'-s '.$va_pdf_paper_size.' '
+            .'--load-error-handling ignore '
             .$va_content_file.' '
             .$va_pdf_file;
 
@@ -84,7 +91,8 @@ $callback = function($msg) {
 
         $endtime = round(microtime(true) * 1000);
 
-        if(isset($va_pdf_message->user_info->email)&& filter_var($va_pdf_message->user_info->email, FILTER_VALIDATE_EMAIL)){
+        //if(isset($va_pdf_message->user_info->email)&& filter_var($va_pdf_message->user_info->email, FILTER_VALIDATE_EMAIL)){
+        if(isset($va_pdf_message->user_info->email)){
 
             //send email to inform the user about success or failure. In case of success send the corresponding pdf download link.
             $mail = new PHPMailer;
@@ -122,6 +130,9 @@ $callback = function($msg) {
             }
             else
                 echo "Message has been sent to:".$va_pdf_message->user_info->email."\n"."Timestamp: ".date('Y-m-d H:i:s')."\n\n";
+        }
+        else{
+            echo "No or invalid email provided"."\n";
         }
     }
     else
