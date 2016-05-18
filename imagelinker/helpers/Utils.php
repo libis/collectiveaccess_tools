@@ -25,11 +25,11 @@ class Utils
         /* Gather information to link. */
 
         /* Process the input file to prepare images to be linked. */
-        // ADD, DELETE input file has only two columns (collective access id and pid to add or delete)
+        // ADD, DELETE input file needs two columns (collective access id and pid to add or delete)
         if (in_array(strtoupper($action), array("ADD","DELETE"))){
             foreach($lines as $line){
                 $record = explode("\t", trim($line));
-                if(sizeof($record) != 2){
+                if(sizeof($record) < 2){
                     $log->logError("Invalid format provided for ". $action." action: " .$line);
                     continue;
                 }
@@ -43,10 +43,11 @@ class Utils
                 $image = null;
             }
         }
+        // UPDATE input file needs three columns (object_id, pid_to_be_updated, pid_to_update_with)
         elseif(strtoupper($action) === "UPDATE"){
             foreach($lines as $line){
                 $record = explode("\t", trim($line));
-                if(sizeof($record) != 3){
+                if(sizeof($record) < 3){
                     $log->logError("Invalid format provided for ". $action." action: " .$line);
                     continue;
                 }
@@ -60,11 +61,11 @@ class Utils
                 $image = null;
             }
         }
-
+        // DUPLICATEDELETE input file needs only object_id
         elseif(strtoupper($action) === "DUPLICATEDELETE"){
             foreach($lines as $line){
                 $record = explode("\t", trim($line));
-                if(sizeof($record) != 1){
+                if(sizeof($record) < 1){
                     $log->logError("Invalid format provided for ". $action." action: " .$line);
                     continue;
                 }
