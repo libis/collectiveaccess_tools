@@ -1,0 +1,1 @@
+Log file will be written in this directory. Furthermore, object_ids of newly added objects will be stored in a file in this directory.
