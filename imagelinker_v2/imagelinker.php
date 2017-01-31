@@ -212,59 +212,39 @@ if(sizeof($argv) >= 4){
                 break;
 
             case "UPDATE":
-                /* Update is always based on object_id, which is a numeric identifier. */
-                if(!is_numeric($imageData->recordId)){
+                /*
+                    Update operation is now based on IDNO (previously it was based on object_id). Therefore we use IDNO
+                    to get the object_id.
+                    The update operation now removes all existing PID/IEs and adds the one given in the input file.
+                    In case there exists no PID/IEs the pid, the given PID will be added to the object.
+
+                 */
+
+                // Convert the IDNO given in the input file into correct format
+                $object_idno = $utils->normalizeIdentifier($imageData->recordId);
+                $query = "ca_objects.idno:'".$object_idno."'";
+
+                $response = $guzzle->findObject($query, 'ca_objects');  // Retrieve object detail with IDNO
+                $validResponse = $utils->isFindResponseValid($response);
+                if($validResponse['isValid']){  //  Check if object is valid
+                    $log->logInfo("\t\tObject found (for record id ".$object_idno." ): object_id = " . $validResponse['object_id']);
+                    echo "Object found (for record id ".$object_idno." ): " . $validResponse['object_id'].".\n";
+                    $pidToReplaceWith = array();
+                    $pidToReplaceWith['digitoolUrl'][] =
+                        array(
+                            'locale'      => $localeId,
+                            $imageField   =>  $imageData->pid);
+
+                    $objectId = $validResponse['object_id'];
+                    $toUpdate = array(
+                        "remove_attributes" => array($imageField),
+                        "attributes" => ($pidToReplaceWith)
+                    );
+
+                }else{
                     $log->logInfo("\t\tInvalid identifier (" . $imageData->recordId . ") for action (" . $action.")");
-                    continue;
-                }
-                $log->logInfo("\t\tValid identifier (" . $imageData->recordId . ") for action (" . $action.")");
-                $response = $guzzle->getFullObject($imageData->recordId, 'ca_objects');
-                $validResponse = $utils->isGetItemResponseValid($response);
-                if($validResponse['isValid']){
-                    $log->logInfo("\t\tObject found: object_id = " . $imageData->recordId);
-                    echo "Object found: " . $imageData->recordId . ".\n";
-                    $existingPids = array();
-
-                    if(!empty($validResponse['object_data']->attributes->digitoolUrl)){
-                        $existingPids = $validResponse['object_data']->attributes->digitoolUrl;
-                        $log->logInfo("\t\tNumber of pids before replacement = " . sizeof($existingPids));
-                        $pidsAfterReplacement = array();
-                        $pidReplacedCounter = 0;
-                        foreach($existingPids as $item){
-                            $normalizedPid = $utils->normalizePid($item->$imageField); // remove url from pid
-                            if($normalizedPid === $imageData->pid){
-                                $log->logInfo("\t\tPid (" . $imageData->pid . ") to replace is found. Replacing it with " . $imageData->replacementPid. ".");
-                                $normalizedPid = $imageData->replacementPid;
-                                $pidReplacedCounter ++;
-                            }
-
-                            $pidsAfterReplacement['digitoolUrl'][] =
-                                array(
-                                    'locale'      => $localeId,
-                                    $imageField   =>  $normalizedPid) ;
-                        }
-
-                        $log->logInfo("\t\tNumber of pids after replacement = " . sizeof($pidsAfterReplacement['digitoolUrl']));
-                        if($pidReplacedCounter === 0){
-                            $log->logInfo("\t\tObject does not contain the pid (" . $imageData->pid . ") to be replaced.");
-                            echo "Object does not contain pid (" . $imageData->pid . ") to be replaced.\n";
-                        }
-                        else{
-                            $objectId = $imageData->recordId;
-                            $toUpdate = array(
-                                "remove_attributes" => array($imageField),
-                                "attributes" => ($pidsAfterReplacement)
-                            );
-                        }
-                    }
-                    else{
-                        $log->logInfo("\t\tObject has no pids.");
-                    }
-
-                }
-                else{
-                    $log->logError("\t\tObject not found for (".$imageData->original.")");
                     echo "Object not found for (".$imageData->original.").\n";
+                    continue;
                 }
 
             break;
