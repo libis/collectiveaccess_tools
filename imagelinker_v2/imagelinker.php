@@ -215,7 +215,7 @@ if(sizeof($argv) >= 4){
                 /*
                     Update operation is now based on IDNO (previously it was based on object_id). Therefore we use IDNO
                     to get the object_id.
-                    The update operation now removes all existing PID/IEs and adds the one given in the input file.
+                    The update operation now removes all existing PID/IEs and adds the one given in the input file. Multiple PID/IEs are added at once.
                     In case there exists no PID/IEs the pid, the given PID will be added to the object.
 
                  */
@@ -223,18 +223,22 @@ if(sizeof($argv) >= 4){
                 // Convert the IDNO given in the input file into correct format
                 $object_idno = $utils->normalizeIdentifier($imageData->recordId);
                 $query = "ca_objects.idno:'".$object_idno."'";
-
                 $response = $guzzle->findObject($query, 'ca_objects');  // Retrieve object detail with IDNO
                 $validResponse = $utils->isFindResponseValid($response);
                 if($validResponse['isValid']){  //  Check if object is valid
                     $log->logInfo("\t\tObject found (for record id ".$object_idno." ): object_id = " . $validResponse['object_id']);
                     echo "Object found (for record id ".$object_idno." ): " . $validResponse['object_id'].".\n";
                     $pidToReplaceWith = array();
-                    $pidToReplaceWith['digitoolUrl'][] =
-                        array(
-                            'locale'      => $localeId,
-                            $imageField   =>  $imageData->pid);
 
+                    $pidList = explode(' ', $imageData->pid);
+                    foreach($pidList as $pid){
+                        $log->logInfo("Processing image ".$pid.":");
+                        $pidToReplaceWith['digitoolUrl'][] =
+                            array(
+                                'locale'      => $localeId,
+                                $imageField   =>  $pid);
+                    }
+                    
                     $objectId = $validResponse['object_id'];
                     $toUpdate = array(
                         "remove_attributes" => array($imageField),

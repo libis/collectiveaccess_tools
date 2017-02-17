@@ -45,6 +45,7 @@ class Utils
         }
         // UPDATE input file needs three columns (object_id, pid_to_be_updated, pid_to_update_with)
         elseif(strtoupper($action) === "UPDATE"){
+            $duplicate = false;
             foreach($lines as $line){
                 $record = explode("\t", trim($line));
                 if(sizeof($record) < 3){
@@ -53,13 +54,25 @@ class Utils
                 }
 
                 $image = new ImageData();
-                $image->setRecordId(trim($record[0]));
-                $image->setPid(trim($record[1]));               //pid to be replaced
-                $image->setReplacementPid(trim($record[2]));    //pid to replace with
-                $image->setOriginal(trim($line));
-                $imagesToLink [] = $image;
-                $image = null;
-            }
+                $record_id = $this->normalizeIdentifier(trim($record[0]));
+
+                foreach ($imagesToLink as $item){
+                    if($item->recordId === $record_id){
+                        $duplicate = true;
+                        $item->pid = $item->pid ." ". trim($record[1]);
+                    }
+
+                }
+                if($duplicate === false){
+                    $image->setRecordId($record_id);
+                    $image->setPid(trim($record[1]));               //pid to be replaced
+                    $image->setReplacementPid(trim($record[2]));    //pid to replace with
+                    $image->setOriginal(trim($line));
+                    $imagesToLink [] = $image;
+                    $image = null;
+                }
+                $duplicate = false;
+		}
         }
         // DUPLICATEDELETE input file needs only object_id
         elseif(strtoupper($action) === "DUPLICATEDELETE"){
