@@ -185,6 +185,14 @@ if(sizeof($argv) >= 4){
                         echo "Object will be added to collection:".$collection->collection_id."\n";
                         /*echo "Object will be added to collection:".$collection->idno."\n";*/
                         $log->logInfo("\t\tObject will be added to collection (collection_id): " . $collection->collection_id);
+						
+                        /*Add idno as temporary title. This is needed as client wants a link to newly created objects when searched via quick search. */
+                        $data["preferred_labels"] = array(
+                                array(
+                                    'locale'      => $localeId,
+                                    "name" => $imageData->recordId
+                                )
+                        );						
 
                     }
                     /*Create Object*/
