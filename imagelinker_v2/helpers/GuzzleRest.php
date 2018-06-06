@@ -38,7 +38,7 @@ class GuzzleRest {
         $this->host = $configurations['host'];
         $this->base = $configurations['base'];
 
-        $this->uri = 'http://'.$this->userid.':'.$this->paswoord.'@'.$this->host ;
+        $this->uri = 'https://'.$this->userid.':'.$this->paswoord.'@'.$this->host ;
         $this->header = array(
             'Content-Type'  => 'application/json',
         );
