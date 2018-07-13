@@ -26,7 +26,7 @@ echo " [*] Waiting for requests to generate pdfs. To exit press CTRL+C", "\n";
 
 $callback = function($msg) {
     require __DIR__ . '/pdf_worker_conf.php';
-    echo "\r\n...............................\r\n";
+   echo "\r\n...............................\r\n";
 
     $microtime = round(microtime(true) * 1000);
     $va_base_directory = dirname(__FILE__)."/".$co_pdf_base_dir."/";
@@ -73,6 +73,8 @@ $callback = function($msg) {
         $va_pdf_paper_size = isset($va_pdf_settings->page_format) ? $va_pdf_settings->page_format : "A4" ;
 
         $print_options = array();
+        if(isset($va_pdf_settings->footer))
+            $print_options[] ="--footer-left " . "'".$va_pdf_settings->footer."'";
         if(isset($va_pdf_settings->m_top))
             $print_options[] ="--margin-top " . $va_pdf_settings->m_top;
         if(isset($va_pdf_settings->m_bottom))
@@ -90,7 +92,6 @@ $callback = function($msg) {
             .'--header-html '.$va_header_file.' '
             .'-O '.$va_pdf_orientation.' '
             .'-s '.$va_pdf_paper_size.' '
-	    .'--footer-left "CRKC | Abdij van Park 7 | 3001 Heverlee | 016406073 | info@crkc.be       " '
             .'--load-error-handling ignore '
             .$va_content_file.' '
             .$va_pdf_file;
@@ -115,7 +116,7 @@ $callback = function($msg) {
             $mail->addAddress($va_pdf_message->user_info->email, $va_user_name);  // Add a recipient
 
             $mail->isHTML(true);
-            $mail->Subject = "=?UTF-8?B?".base64_encode("Uw geëxporteerde CRKC pdf is klaar")."?=";
+            $mail->Subject = "=?UTF-8?B?".base64_encode("Uw geëxporteerde Collective Access pdf is klaar")."?=";
 
             $va_email_message = ($va_ret_val === 0)
                 ?
@@ -123,7 +124,7 @@ $callback = function($msg) {
                 "Uw pdf is beschikbaar op:<br>".
                 $va_pdf_download_link."<br><br>".
                 "Met vriendelijke groeten,<br>".
-                "Team CRKC-LIBIS<br>"
+                "LIBIS Heron Team<br>"
                 :
                 "Error in generating pdf, please try again";
 
