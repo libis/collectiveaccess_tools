@@ -115,8 +115,12 @@ if(sizeof($argv) >= 4){
                 /* Trim empty space and zeroes at the start of the identifier. */
                 $imageData->recordId = trim($imageData->recordId);
                 $imageData->recordId = ltrim($imageData->recordId, '0');
-                $query = "ca_objects.idno:'".$imageData->recordId."'";
 
+		/*CAG sometime delivers images with file names missing '_' that causes a problem in finding object, this part will fix the problem*/
+                if (strpos(strtolower($systemName), 'cag') !== false) 
+					$imageData->recordId = current(explode(".", $imageData->recordId));
+
+                $query = "ca_objects.idno:'".$imageData->recordId."'";
                 $response = $guzzle->findObject($query, 'ca_objects');
                 $validResponse = $utils->isFindResponseValid($response);
                 if($validResponse['isValid']){
@@ -185,14 +189,14 @@ if(sizeof($argv) >= 4){
                         echo "Object will be added to collection:".$collection->collection_id."\n";
                         /*echo "Object will be added to collection:".$collection->idno."\n";*/
                         $log->logInfo("\t\tObject will be added to collection (collection_id): " . $collection->collection_id);
-						
+
                         /*Add idno as temporary title. This is needed as client wants a link to newly created objects when searched via quick search. */
                         $data["preferred_labels"] = array(
                                 array(
                                     'locale'      => $localeId,
                                     "name" => $imageData->recordId
                                 )
-                        );						
+                        );
 
                     }
                     /*Create Object*/
@@ -228,6 +232,10 @@ if(sizeof($argv) >= 4){
 
                  */
 
+                /*CAG sometime delivers images with file names missing '_' that causes a problem in finding object, this part will fix the problem*/
+                if (strpos(strtolower($systemName), 'cag') !== false)
+                    $imageData->recordId = current(explode(".", $imageData->recordId));
+
                 // Convert the IDNO given in the input file into correct format
                 $object_idno = $utils->normalizeIdentifier($imageData->recordId);
                 $query = "ca_objects.idno:'".$object_idno."'";
@@ -262,6 +270,10 @@ if(sizeof($argv) >= 4){
             break;
 
             case "DELETE":
+                /*CAG sometime delivers images with file names missing '_' that causes a problem in finding object, this part will fix the problem*/
+                if (strpos(strtolower($systemName), 'cag') !== false)
+                    $imageData->recordId = current(explode(".", $imageData->recordId));
+
                 /* Deletion is always based on object_id, which is a numeric identifier. */
                 if(!is_numeric($imageData->recordId)){
                     $log->logInfo("\t\tInvalid identifier (" . $imageData->recordId . ") for action (" . $action.")");
