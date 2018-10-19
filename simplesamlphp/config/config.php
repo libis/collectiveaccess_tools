@@ -73,7 +73,7 @@ $config = array(
      * also as the technical contact in generated metadata.
      */
     'technicalcontact_name' => 'Administrator',
-    'technicalcontact_email' => 'na@example.org',
+    'technicalcontact_email' => 'naeem.muhammad@kuleuven.be',
 
     /*
      * The envelope from address for outgoing emails.
@@ -113,7 +113,7 @@ $config = array(
      * metadata listing and diagnostics pages.
      * You can also put a hash here; run "bin/pwgen.php" to generate one.
      */
-    'auth.adminpassword' => '123',
+    'auth.adminpassword' => 'lib_2018',
 
     /*
      * Set this options to true if you want to require administrator password to access the web interface
@@ -150,7 +150,7 @@ $config = array(
      * Example:
      *   'trusted.url.domains' => array('sp.example.com', 'app.example.com'),
      */
-    'trusted.url.domains' => array(),
+    'trusted.url.domains' => array('test.collectiveaccess.tudelft.nl'),
 
     /*
      * Enable regular expression matching of trusted.url.domains.
@@ -257,8 +257,10 @@ $config = array(
      * Options: [syslog,file,errorlog]
      *
      */
-    'logging.level' => SimpleSAML\Logger::NOTICE,
-    'logging.handler' => 'syslog',
+    //'logging.level' => SimpleSAML\Logger::NOTICE,
+	//'logging.handler' => 'syslog',
+    'logging.level' => SimpleSAML\Logger::INFO,
+    'logging.handler' => 'file',    
 
     /*
      * Specify the format of the logs. Its use varies depending on the log handler used (for instance, you cannot

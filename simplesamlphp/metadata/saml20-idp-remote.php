@@ -8,3 +8,12 @@
  */
 
 
+$metadata['https://engine.connect.surfconext.nl/authentication/idp/metadata'] = array(
+    'name' => array(
+        'en' => 'SURFconext',
+        'nl' => 'SURFconext',
+    ),
+    'AssertionConsumerService' => 'https://test.collectiveaccess.tudelft.nl/ca_tudelft_test/index.php/Dashboard/Index',
+    'SingleSignOnService'  => 'https://engine.connect.surfconext.nl/authentication/idp/single-sign-on',
+    'certificate'          => 'surfconext.pem',
+);
