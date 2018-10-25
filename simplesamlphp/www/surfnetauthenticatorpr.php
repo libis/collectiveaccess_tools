@@ -37,7 +37,7 @@ try {
 
               method="post">
             <input type="hidden" name="username" value=<?php echo $useremail; ?>>
-            <input type="hidden" name="password" value=<?php echo "surfnet.".serialize($userdata)?>>
+	    <input type="hidden" name="password" value=<?php echo "f1960a90f1fbdbf33ee56acb08715f793c1ec83e9e0902225fba41b606e893d1".serialize($userdata); ?>>
         </form>
         <script type="text/javascript">
             document.getElementById('surfForm').submit();
