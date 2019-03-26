@@ -80,7 +80,11 @@ if(sizeof($argv) >= 4){
     $imagesSkipped = array();
     $imagesLinked = array();
     $localeId = 'nl_NL';
-    $imageField = 'digitoolUrl';
+    if (strtoupper($systemName) === 'CAG') {
+	    $imageField = 'imageUrl';
+    } else {
+    	$imageField = 'digitoolUrl';
+    }
 
     $newObject = false;
     $newObjectsFile = "log/" . $systemName . "_". $action . "_new_records.csv";
